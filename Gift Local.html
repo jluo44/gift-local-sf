@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Local - Find the Perfect Gift Nearby</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            color: #e0e0e0;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        #giftForm {
+            max-width: 500px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input, select {
+            width: calc(100% - 30px); /* Subtract padding from total width */
+            margin: 10px 0 25px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            box-sizing: border-box; /* Include padding in width calculation */
+            -webkit-appearance: none; /* Remove default styling on iOS */
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Add custom dropdown arrow */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            padding-right: 45px; /* Make room for custom arrow */
+        }
+
+        /* Remove spinner buttons from number input */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            color: #2c3e50;
+            display: none;
+        }
+
+        #result.show {
+            display: block;
+        }
+
+        #result a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #result a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .sf-landmarks {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            #giftForm { margin: 20px; padding: 20px; }
+            .container { padding: 20px; }
+        }
+
+        .gift-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .suggestion-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gift-details {
+            padding: 15px 10px 5px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .gift-image {
+                height: 200px;
+            }
+            .suggestion-card {
+                max-width: 100%;
+            }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .button-group a {
+            flex: 1;
+            max-width: 200px;
+            padding: 12px 25px !important;
+            margin-top: 0 !important;
+        }
+
+        .reset-button {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        }
+
+        .reset-button:hover {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Find the Perfect Local Gift <span class="emoji">🎁</span></h1>
+        <div class="subtitle">Discover unique gifts in the heart of San Francisco</div>
+        
+        <form id="giftForm">
+            <label for="interest">What interests them?</label>
+            <select id="interest">
+                <option value="" disabled selected>Select an interest...</option>
+                <option value="books">📚 Books & Reading</option>
+                <option value="fashion">👕 Fashion & Style</option>
+                <option value="food">🍳 Gourmet Food</option>
+                <option value="art">🎨 Art & Handmade Goods</option>
+                <option value="tech">💻 Technology</option>
+                <option value="sports">⚽ Sports & Fitness</option>
+                <option value="music">🎵 Music</option>
+                <option value="plants">🌿 Plants & Garden</option>
+                <option value="games">🎮 Games & Hobbies</option>
+                <option value="beauty">✨ Beauty & Wellness</option>
+            </select>
+
+            <label for="budget">What's your budget?</label>
+            <input type="number" id="budget" placeholder="Enter amount in $" min="1">
+            
+            <button type="button" onclick="suggestGift()">Find the Perfect Gift! 🔍</button>
+        </form>
+        <div id="result"></div>
+        
+        <div class="sf-landmarks">
+            Serving the Bay Area: Golden Gate Bridge • Fisherman's Wharf • Union Square • Hayes Valley • Mission District
+        </div>
+    </div>
+
+    <script>
+        function suggestGift() {
+            const resultDiv = document.getElementById('result');
+            
+            const interest = document.getElementById('interest').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            
+            if (!interest || !budget) {
+                resultDiv.innerHTML = `
+                    <div style="color: #e74c3c;">Please fill in all fields! 😊</div>
+                `;
+                resultDiv.classList.add('show');
+                return;
+            }
+            
+            const giftSuggestions = {
+                books: {
+                    low: { item: "Bestselling Paperback", price: "15-25", 
+                          image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Hardcover Book Collection", price: "40-60",
+                            image: "https://images.unsplash.com/photo-1524578271613-d550eacf6090?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Book Box Subscription", price: "80+",
+                           image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                fashion: {
+                    low: { item: "Stylish Accessories", price: "20-30",
+                          image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Designer T-Shirt or Scarf", price: "50-70",
+                            image: "https://images.unsplash.com/photo-1520006403909-838d6b92c22e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Leather Goods", price: "100+",
+                           image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                food: {
+                    low: { item: "Artisanal Chocolate Box", price: "20-30",
+                          image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Gourmet Gift Basket", price: "50-75",
+                            image: "https://images.unsplash.com/photo-1553531580-a000ac8df244?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Wine & Cheese Set", price: "100+",
+                           image: "https://images.unsplash.com/photo-1506458961255-571f40df5aad?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                art: {
+                    low: { item: "Handmade Jewelry", price: "25-35",
+                          image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Local Artist Print", price: "45-65",
+                            image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Original Artwork", price: "100+",
+                           image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                tech: {
+                    low: { item: "Smart Accessories", price: "25-35",
+                          image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Wireless Earbuds", price: "50-80",
+                            image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Gadgets", price: "150+",
+                           image: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                sports: {
+                    low: { item: "Premium Water Bottle", price: "20-30",
+                          image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Fitness Tracker", price: "50-80",
+                            image: "https://images.unsplash.com/photo-1557166983-5939644443a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Sports Equipment", price: "100+",
+                           image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                music: {
+                    low: { item: "Vinyl Records", price: "20-30",
+                          image: "https://images.unsplash.com/photo-1489641493513-ba4ee84ccea9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Bluetooth Speaker", price: "50-80",
+                            image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Premium Headphones", price: "150+",
+                           image: "https://images.unsplash.com/photo-1599669454699-248893623440?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                plants: {
+                    low: { item: "Succulent Collection", price: "20-30",
+                          image: "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Indoor Plant Set", price: "40-60",
+                            image: "https://images.unsplash.com/photo-1545241047-6083a3684587?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Rare Plant Species", price: "80+",
+                           image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                games: {
+                    low: { item: "Board Game", price: "20-35",
+                          image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Premium Card Games", price: "40-60",
+                            image: "https://images.unsplash.com/photo-1564694202883-46e7448c1b26?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Collector's Edition Games", price: "80+",
+                           image: "https://images.unsplash.com/photo-1616598443275-c3b50bd35619?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                },
+                beauty: {
+                    low: { item: "Skincare Set", price: "25-35",
+                          image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    medium: { item: "Premium Beauty Box", price: "50-75",
+                            image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                    high: { item: "Luxury Beauty Collection", price: "100+",
+                           image: "https://images.unsplash.com/photo-1527633412983-d80af308e660?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                }
+            };
+
+            const recommendations = {
+                books: { name: "Local Bookstore", link: "https://maps.google.com?q=local+bookstore", emoji: "📚" },
+                fashion: { name: "Trendy Boutique", link: "https://maps.google.com?q=local+boutique", emoji: "👕" },
+                food: { name: "Gourmet Market", link: "https://maps.google.com?q=gourmet+market", emoji: "🍳" },
+                art: { name: "Handmade Crafts Store", link: "https://maps.google.com?q=handmade+crafts", emoji: "🎨" },
+                tech: { name: "Electronics Store", link: "https://maps.google.com?q=electronics+store", emoji: "💻" },
+                sports: { name: "Sports Equipment Store", link: "https://maps.google.com?q=sports+store", emoji: "⚽" },
+                music: { name: "Music Shop", link: "https://maps.google.com?q=music+store", emoji: "🎵" },
+                plants: { name: "Plant Nursery", link: "https://maps.google.com?q=plant+nursery", emoji: "🌿" },
+                games: { name: "Game Store", link: "https://maps.google.com?q=game+store", emoji: "🎮" },
+                beauty: { name: "Beauty Supply Store", link: "https://maps.google.com?q=beauty+supply", emoji: "✨" }
+            };
+            
+            // Determine budget category
+            let budgetCategory;
+            if (budget < 40) {
+                budgetCategory = 'low';
+            } else if (budget < 80) {
+                budgetCategory = 'medium';
+            } else {
+                budgetCategory = 'high';
+            }
+
+            const store = recommendations[interest];
+            const suggestion = giftSuggestions[interest][budgetCategory];
+            
+            resultDiv.innerHTML = `
+                <div class="emoji">${store.emoji}</div>
+                <div style="font-size: 1.2em; margin-bottom: 10px;">
+                    Perfect! We found a great match:
+                </div>
+                <div style="font-size: 1.5em; font-weight: bold; color: #2c3e50; margin-bottom: 15px">
+                    ${store.name}
+                </div>
+                <div class="suggestion-card">
+                    <img src="${suggestion.image}" alt="${suggestion.item}" class="gift-image" loading="lazy">
+                    <div class="gift-details">
+                        <div style="color: #2c3e50; font-weight: bold;">Suggested Gift:</div>
+                        <div style="color: #3498db; font-size: 1.2em; margin: 8px 0;">${suggestion.item}</div>
+                        <div style="color: #7f8c8d; font-size: 0.9em;">Estimated Price: $${suggestion.price}</div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <a href="${store.link}" target="_blank">View on Maps 🗺️</a>
+                    <a href="#" onclick="resetForm()" class="reset-button">Find Another Gift 🎁</a>
+                </div>
+            `;
+            resultDiv.classList.add('show');
+        }
+
+        function resetForm() {
+            // Reset form values
+            document.getElementById('interest').value = '';
+            document.getElementById('budget').value = '';
+            
+            // Clear and hide results
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            resultDiv.classList.remove('show');
+            
+            // Smooth scroll to top of form
+            document.getElementById('giftForm').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    </script>
+</body>
+</html>
