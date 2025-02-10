@@ -156,21 +156,93 @@
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .sf-landmarks {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        @media (max-width: 768px) {
+            h1 { 
+                font-size: 2em; 
+                padding: 0 15px;
+            }
+            
+            .subtitle {
+                font-size: 1.1em;
+                padding: 0 20px;
+                margin-bottom: 30px;
+            }
+
+            #giftForm { 
+                margin: 10px;
+                padding: 25px 20px;
+                border-radius: 15px;
+            }
+
+            .container { 
+                padding: 15px 10px; 
+            }
+
+            input, select {
+                font-size: 16px; /* Prevents iOS zoom on focus */
+                padding: 12px;
+                margin: 8px 0 20px;
+            }
+
+            button {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            .gift-image {
+                height: 180px;
+                border-radius: 10px;
+            }
+
+            .suggestion-card {
+                max-width: 100%;
+                padding: 15px;
+                margin: 10px 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button-group a {
+                max-width: none;
+                width: 100%;
+                padding: 12px 20px !important;
+                font-size: 15px;
+            }
+
+            #result {
+                padding: 20px 15px;
+                margin-top: 20px;
+            }
+
+            .emoji {
+                font-size: 2.5em;
+            }
+
+            .gift-details {
+                padding: 10px 5px 0;
+            }
         }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 2em; }
-            #giftForm { margin: 20px; padding: 20px; }
-            .container { padding: 20px; }
+        /* Add specific styles for very small screens */
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            #giftForm {
+                padding: 20px 15px;
+            }
+
+            .gift-image {
+                height: 160px;
+            }
         }
 
         .gift-image {
@@ -256,10 +328,6 @@
             <button type="button" onclick="suggestGift()">Find the Perfect Gift! 🔍</button>
         </form>
         <div id="result"></div>
-        
-        <div class="sf-landmarks">
-            Serving the Bay Area: Golden Gate Bridge • Fisherman's Wharf • Union Square • Hayes Valley • Mission District
-        </div>
     </div>
 
     <script>
